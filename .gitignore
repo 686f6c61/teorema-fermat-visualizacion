@@ -1,0 +1,36 @@
+# Entorno virtual
+fermat_venv/
+venv/
+env/
+.env/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.so
+.Python
+
+# Archivos generados por la ejecución
+*.html
+# Excluir imágenes generadas, excepto las que están en la carpeta img
+/*.png
+!img/*.png
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+.directory
+
+# Archivos de IDEs y editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Archivos de distribución y compilación
+dist/
+build/
+*.egg-info/ 
