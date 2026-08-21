@@ -20,7 +20,6 @@ from pathlib import Path
 import numpy as np
 from fastapi import FastAPI, Query
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from .near import lame_lattice, near_misses, simpsons_near_misses
@@ -36,16 +35,10 @@ app = FastAPI(
 app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 _STATIC = Path(__file__).parent / "static"
-app.mount("/static", StaticFiles(directory=_STATIC), name="static")
 
 
 def _b64(array: np.ndarray) -> str:
     return base64.b64encode(array.astype(array.dtype.newbyteorder("<")).tobytes()).decode("ascii")
-
-
-@app.get("/")
-def index() -> FileResponse:
-    return FileResponse(_STATIC / "index.html")
 
 
 @app.get("/api/triples")
@@ -151,6 +144,11 @@ def cloud(
 def health() -> dict:
     triples_small = all_triples(100)
     return {"status": "ok", "triples_le_100": int(triples_small["c"].size)}
+
+
+# montado en la raíz DESPUÉS de las rutas /api: el index.html con paths
+# relativos funciona igual aquí que desplegado en GitHub Pages
+app.mount("/", StaticFiles(directory=_STATIC, html=True), name="site")
 
 
 def main(host: str = "127.0.0.1", port: int = 8000) -> None:

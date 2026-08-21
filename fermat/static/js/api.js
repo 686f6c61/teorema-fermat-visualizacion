@@ -1,33 +1,52 @@
-// Cliente de la API + utilidades compartidas (decodificación binaria, colormap).
+// Cliente de la API en modo dual: FastAPI si existe, cálculo en navegador
+// (GitHub Pages) con compute.js si no. Colormap compartido.
+
+import * as compute from './compute.js';
 
 const DTYPES = { int32: Int32Array, uint8: Uint8Array, int8: Int8Array, float32: Float32Array };
 
+let backend = null;
+
+export const mode = () => (backend === null ? 'desconocido' : backend ? 'servidor' : 'navegador');
+
 export function decodeColumn(b64, dtype) {
+  if (typeof b64 !== 'string') return b64; // typed array del modo estático
   const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
   const ctor = DTYPES[dtype] ?? Int32Array;
   return new ctor(bytes.buffer, 0, bytes.byteLength / ctor.BYTES_PER_ELEMENT);
 }
 
-async function getJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
-  return res.json();
+async function dual(path, computeFn) {
+  if (backend !== false) {
+    try {
+      const res = await fetch(path);
+      if (res.ok) {
+        backend = true;
+        return await res.json();
+      }
+    } catch {
+      /* sin backend: modo estático */
+    }
+    backend = false;
+  }
+  return computeFn();
 }
 
 export const fetchTriples = (limit, primitive) =>
-  getJson(`/api/triples?limit=${limit}&primitive=${primitive}`);
+  dual(`/api/triples?limit=${limit}&primitive=${primitive}`, () => compute.triples(limit, primitive));
 
 export const fetchNear = (n, amax, top = 60, ensure = null) =>
-  getJson(
+  dual(
     `/api/near?n=${n}&amax=${amax}&top=${top}` +
       (ensure ? `&ensure_a=${ensure[0]}&ensure_b=${ensure[1]}` : ''),
+    () => compute.near(n, amax, top, ensure),
   );
 
-export const fetchLame = (n, c) => getJson(`/api/lame?n=${n}&c=${c}`);
+export const fetchLame = (n, c) => dual(`/api/lame?n=${n}&c=${c}`, () => compute.lame(n, c));
 
-export const fetchCloud = (n, m) => getJson(`/api/cloud?n=${n}&m=${m}`);
+export const fetchCloud = (n, m) => dual(`/api/cloud?n=${n}&m=${m}`, () => compute.cloud(n, m));
 
-export const fetchCuriosities = () => getJson('/api/curiosities');
+export const fetchCuriosities = () => dual('/api/curiosities', () => compute.simpsons());
 
 export const formatInt = (x) => x.toLocaleString('es-ES');
 
