@@ -1,0 +1,210 @@
+:root {
+  --bg: #0b0f14;
+  --panel: #11161d;
+  --panel-2: #151c25;
+  --border: #1f2733;
+  --text: #dbe4ee;
+  --muted: #8b98a9;
+  --accent: #e6b458;
+  --accent-strong: #b8863b;
+  --gold: #ffd60a;
+  font-size: 15px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------- cabecera */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #10151c, var(--bg));
+}
+
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo { width: 36px; height: 36px; color: var(--accent); }
+.brand h1 { margin: 0; font-size: 1.15rem; letter-spacing: 0.2px; }
+.tagline { margin: 0; color: var(--muted); font-size: 0.8rem; }
+
+.tabs { display: flex; gap: 5px; background: var(--panel); border: 1px solid var(--border); padding: 4px; border-radius: 10px; flex-wrap: wrap; }
+.tabs button {
+  border: 0; background: transparent; color: var(--muted);
+  padding: 7px 13px; border-radius: 7px; cursor: pointer; font: inherit; font-size: 0.9rem;
+}
+.tabs button:hover { color: var(--text); }
+.tabs button.active { background: var(--accent-strong); color: #14100a; font-weight: 600; }
+
+/* ------------------------------------------------------------ contenido */
+
+main { max-width: 1280px; margin: 0 auto; padding: 20px 28px 40px; }
+
+.view { display: none; }
+.view.active { display: block; }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+h2 { margin: 0 0 4px; font-size: 0.95rem; font-weight: 600; }
+.hint { margin: 0 0 10px; color: var(--muted); font-size: 0.8rem; }
+.muted { color: var(--muted); }
+.legend-hint { padding: 10px 4px 2px; }
+
+/* controles */
+.controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+.controls label { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 0.85rem; }
+.controls output { color: var(--text); min-width: 2.2em; font-variant-numeric: tabular-nums; }
+
+input[type="number"], select {
+  background: var(--panel-2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 7px 10px; font: inherit; width: 100px;
+}
+input[type="range"] { accent-color: var(--accent); width: 140px; }
+input:focus { outline: 1px solid var(--accent); }
+
+button {
+  background: var(--panel-2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 7px 14px; font: inherit; cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent-strong); border-color: var(--accent-strong); color: #14100a; font-weight: 600; }
+button.primary:hover { filter: brightness(1.12); }
+button.ghost { padding: 7px 12px; }
+
+.presets { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; flex-wrap: wrap; }
+.presets button { padding: 5px 10px; font-size: 0.8rem; }
+.presets small { color: var(--muted); font-weight: 400; }
+
+.status { color: var(--muted); font-size: 0.85rem; }
+.status.error { color: #ff8080; }
+
+/* ------------------------------------------------------------ gráficos */
+
+.chart-card { padding-bottom: 10px; }
+.chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+
+.canvas-box { position: relative; margin-top: 8px; border-radius: 10px; overflow: hidden; background: #0a0d12; border: 1px solid var(--border); }
+.canvas-box canvas { display: block; width: 100%; height: 540px; cursor: crosshair; touch-action: none; }
+.square-box { max-width: 660px; margin: 8px auto 0; }
+.square-box canvas { aspect-ratio: 1; height: auto; }
+
+.tip {
+  position: absolute; pointer-events: none; z-index: 5;
+  background: rgba(10, 13, 18, 0.94); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 11px; font-size: 0.8rem; line-height: 1.45;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); white-space: nowrap;
+}
+.tip b { color: var(--accent); }
+.tip .row { display: flex; justify-content: space-between; gap: 14px; }
+.tip .row span:first-child { color: var(--muted); }
+
+/* ------------------------------------------------- casi-soluciones */
+
+.near-grid {
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(360px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.table-scroll { max-height: 480px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+thead th {
+  position: sticky; top: 0; background: var(--panel-2); color: var(--muted);
+  text-align: right; padding: 8px 10px; font-weight: 500; border-bottom: 1px solid var(--border);
+}
+tbody td { padding: 6px 10px; text-align: right; border-bottom: 1px solid #161d27; }
+tbody tr:hover { background: #18202c; }
+tbody tr.ensured { background: rgba(230, 180, 88, 0.14); }
+tbody tr.ensured td { color: var(--accent); font-weight: 600; }
+td.mono, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; }
+
+/* ------------------------------------------------- curiosidades */
+
+.curio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.curio-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.curio-card.simpsons { border-color: #3d3424; }
+.curio-card.ramanujan { border-color: #24343d; }
+
+.curio-card header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.badge {
+  font-size: 0.72rem; padding: 3px 9px; border-radius: 999px;
+  background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+}
+.curio-card h3 { margin: 0; font-size: 1.02rem; font-weight: 600; }
+
+.digits { display: flex; flex-direction: column; gap: 4px; background: #0a0d12; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; overflow-x: auto; }
+.digits code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88rem; line-height: 1.5; white-space: nowrap;
+}
+.digits .lbl { color: var(--muted); font-size: 0.72rem; margin-right: 8px; }
+.digits .match { color: #7dd3fc; }
+.digits .diff { color: #ff6b6b; font-weight: 700; background: rgba(255, 107, 107, 0.12); border-radius: 3px; padding: 0 1px; }
+.diff-demo {
+  color: #ff6b6b; font-weight: 700; background: rgba(255, 107, 107, 0.12); border-radius: 3px; padding: 0 3px;
+}
+
+.curio-stats { display: flex; gap: 26px; margin: 0; }
+.curio-stats dt { color: var(--muted); font-size: 0.75rem; }
+.curio-stats dd { margin: 0; font-variant-numeric: tabular-nums; font-size: 0.95rem; }
+.note { margin: 0; color: #b9c4d2; font-size: 0.85rem; flex-grow: 1; }
+
+/* -------------------------------------------------------------- acerca */
+
+.about-card { max-width: 760px; margin: 0 auto 16px; }
+.about-card h2 { margin-top: 22px; font-size: 1rem; }
+.about-card h2:first-child { margin-top: 0; }
+.about-card p, .about-card li { color: #b9c4d2; }
+.about-card ul { padding-left: 20px; }
+
+.try-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0 4px; }
+.try-n { display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 11px 13px; font-size: 0.95rem; font-weight: 600; }
+.try-n small { color: var(--muted); font-weight: 400; font-size: 0.75rem; line-height: 1.35; }
+.try-n:hover small { color: var(--text); }
+
+a { color: var(--accent); }
+
+footer {
+  text-align: center; color: var(--muted); font-size: 0.8rem;
+  padding: 18px; border-top: 1px solid var(--border); margin-top: 30px;
+}
+
+/* ---------------------------------------------------------- responsive */
+
+@media (max-width: 980px) {
+  main { padding: 14px; }
+  .near-grid { grid-template-columns: 1fr; }
+  .canvas-box canvas { height: 420px; }
+  .curio-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Último Teorema de Fermat — explorador interactivo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 26 Q10 24 14 18 T27 6' fill='none' stroke='%23e6b458' stroke-width='2.5'/%3E%3Ccircle cx='5' cy='25' r='2.4' fill='%23ffd60a'/%3E%3Ccircle cx='26' cy='7' r='2.4' fill='%237dd3fc'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M4 26 Q10 24 14 18 T27 6" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        <circle cx="5" cy="25" r="2.4" fill="#ffd60a"/>
+        <circle cx="26" cy="7" r="2.4" fill="#7dd3fc"/>
+      </svg>
+      <div>
+        <h1>Último Teorema de Fermat</h1>
+        <p class="tagline">aⁿ + bⁿ = cⁿ no tiene soluciones enteras para n &gt; 2</p>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Vistas">
+      <button data-view="ternas" class="active" type="button">Ternas</button>
+      <button data-view="lame" type="button">La curva</button>
+      <button data-view="near" type="button">Casi-soluciones</button>
+      <button data-view="curiosities" type="button">Curiosidades</button>
+      <button data-view="cloud" type="button">3D</button>
+      <button data-view="about" type="button">Acerca de</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ================================================== ternas ===== -->
+    <section id="view-ternas" class="view active">
+      <div class="controls card">
+        <label>hipotenusa c ≤
+          <input id="triples-limit" type="number" value="1000" min="5" max="20000" step="5">
+        </label>
+        <button id="triples-update" class="primary" type="button">Analizar</button>
+        <label class="check"><input type="checkbox" id="triples-primitive"> solo primitivas</label>
+        <div class="presets" id="triples-presets">
+          <span class="muted">presets:</span>
+          <button data-limit="200" type="button">200</button>
+          <button data-limit="1000" type="button">10³</button>
+          <button data-limit="5000" type="button">5·10³</button>
+          <button data-limit="20000" type="button">2·10⁴ <small>(primitivas)</small></button>
+        </div>
+        <span id="triples-status" class="status" aria-live="polite"></span>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-head">
+          <div>
+            <h2>Ternas pitagóricas — el caso n = 2</h2>
+            <p class="hint">cada punto es (a, b) con a² + b² = c² · color = hipotenusa · rueda = zoom · arrastrar = mover · doble clic = ajustar</p>
+          </div>
+        </div>
+        <div class="canvas-box">
+          <canvas id="triples-canvas"></canvas>
+          <div id="triples-tip" class="tip" hidden></div>
+        </div>
+        <p class="hint legend-hint">Los múltiplos de cada terna primitiva se alinean en rayos desde el origen: esa estructura de abanico solo existe para n = 2. Generadas con la parametrización de Euclides (a = m²−n², b = 2mn, c = m²+n²), sin búsquedas brutales.</p>
+      </div>
+    </section>
+
+    <!-- ================================================== curva ===== -->
+    <section id="view-lame" class="view">
+      <div class="controls card">
+        <label>n =
+          <input id="lame-n" type="range" min="2" max="12" value="3" step="1">
+          <output id="lame-n-output">3</output>
+        </label>
+        <label>c =
+          <input id="lame-c" type="range" min="5" max="300" value="50" step="1">
+          <output id="lame-c-output">50</output>
+        </label>
+        <div class="presets" id="lame-presets">
+          <span class="muted">prueba:</span>
+          <button data-n="2" data-c="25" type="button">n=2, c=25 <small>(ternas exactas)</small></button>
+          <button data-n="3" data-c="9" type="button">n=3, c=9 <small>(6³+8³=9³−1)</small></button>
+          <button data-n="12" data-c="20" type="button">n=12, c=20 <small>(casi cuadrado)</small></button>
+        </div>
+        <span id="lame-status" class="status" aria-live="polite"></span>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-head">
+          <div>
+            <h2>La curva de Lamé aⁿ + bⁿ = cⁿ y la rejilla de enteros</h2>
+            <p class="hint">la curva morfea de círculo (n = 2) a cuadrado (n → ∞); una solución sería un punto de la rejilla exactamente sobre la curva</p>
+          </div>
+        </div>
+        <div class="canvas-box square-box">
+          <canvas id="lame-canvas"></canvas>
+          <div id="lame-tip" class="tip" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ casi-soluciones == -->
+    <section id="view-near" class="view">
+      <div class="controls card">
+        <label>n =
+          <input id="near-n" type="number" value="3" min="2" max="12" step="1">
+        </label>
+        <label>a, b ≤
+          <input id="near-amax" type="number" value="300" min="2" max="2000" step="10">
+        </label>
+        <button id="near-update" class="primary" type="button">Analizar</button>
+        <div class="presets" id="near-presets">
+          <span class="muted">presets:</span>
+          <button data-n="3" data-amax="300" type="button">cubos</button>
+          <button data-n="4" data-amax="400" type="button">cuartas</button>
+          <button data-n="5" data-amax="600" type="button">quintas</button>
+          <button data-n="12" data-amax="1200" type="button">duodécimas</button>
+        </div>
+        <span id="near-status" class="status" aria-live="polite"></span>
+      </div>
+      <div class="near-grid">
+        <div class="card chart-card">
+          <div class="chart-head">
+            <div>
+              <h2>Mapa del error |aⁿ+bⁿ−cⁿ|/cⁿ</h2>
+              <p class="hint">amarillo = casi-solución · el mapa completo se calcula de una vez con NumPy</p>
+            </div>
+          </div>
+          <div class="canvas-box">
+            <canvas id="near-canvas"></canvas>
+            <div id="near-tip" class="tip" hidden></div>
+          </div>
+        </div>
+        <div class="card table-card">
+          <h2>Mejores casi-soluciones</h2>
+          <p class="hint" id="near-count"></p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>a</th><th>b</th><th>c</th><th>error rel.</th><th>lado</th><th>aⁿ+bⁿ</th><th>cⁿ</th></tr></thead>
+              <tbody id="near-tbody"></tbody>
+            </table>
+          </div>
+          <p class="hint">El signo indica si aⁿ+bⁿ queda por encima (+) o por debajo (−) de cⁿ. Para n &gt; 2 ninguna fila es exacta: es el teorema. El ranking finalista se re-verifica con enteros de precisión arbitraria.</p>
+          <p class="hint" id="near-note" hidden>⚠️ con n grande, el mapa de calor satura por debajo de ~10⁻¹³ (límite de la precisión flotante); el ranking de la tabla, en cambio, es exacto.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================ curiosidades = -->
+    <section id="view-curiosities" class="view">
+      <div class="card about-card">
+        <h2>Curiosidades: casi-soluciones famosas</h2>
+        <p>
+          El teorema prohíbe igualdades exactas para n &gt; 2, pero las hay <em>casi</em>.
+          <strong>Los Simpson</strong> escondió varias en sus episodios: varios de sus guionistas
+          (David X. Cohen, Ken Keeler, Jeff Westbrook) tienen doctorados en matemáticas o física.
+          Y la más famosa de todas involucra el número del taxista de <strong>Ramanujan</strong>.
+          Aquí están verificadas dígito a dígito con aritmética entera exacta — fíjate en el
+          <span class="diff-demo">dígito divergente</span> resaltado.
+        </p>
+        <p class="hint" id="curiosities-status" aria-live="polite"></p>
+      </div>
+      <div id="curiosities-grid" class="curio-grid"></div>
+      <div class="card about-card">
+        <h2>La anécdota del taxista</h2>
+        <p>
+          G. H. Hardy visitó a Ramanujan enfermo y comentó que había llegado en el taxi número 1729,
+          «un número bastante aburrido». Ramanujan respondió al instante: <em>«No, Hardy, es un
+          número muy interesante: es el menor expresable como suma de dos cubos de dos maneras
+          distintas»</em> — 1729 = 1³ + 12³ = 9³ + 10³. Por eso 1729 es el «número del taxista»
+          (taxicab number). Fíjate en la tarjeta de arriba: esa segunda descomposición da además
+          la casi-solución de Fermat 9³ + 10³ = 12³ + 1.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================== 3D ====== -->
+    <section id="view-cloud" class="view">
+      <div class="controls card">
+        <label>n =
+          <input id="cloud-n" type="number" value="3" min="2" max="12" step="1">
+        </label>
+        <label>rejilla =
+          <input id="cloud-m" type="range" value="40" min="10" max="80" step="5">
+          <output id="cloud-m-output">40</output>
+        </label>
+        <button id="cloud-update" class="primary" type="button">Actualizar</button>
+        <span id="cloud-status" class="status" aria-live="polite"></span>
+      </div>
+      <div class="card chart-card">
+        <div class="chart-head">
+          <div>
+            <h2>La superficie c = (aⁿ + bⁿ)^(1/n) y los enteros cercanos</h2>
+            <p class="hint">los puntos flotan pegados a la superficie sin tocarla jamás (para n = 2, los dorados la tocan: son ternas)</p>
+          </div>
+        </div>
+        <div class="canvas-box">
+          <canvas id="cloud-canvas"></canvas>
+          <div id="cloud-tip" class="tip" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================== acerca ===== -->
+    <section id="view-about" class="view">
+      <div class="card about-card">
+        <h2>El margen más famoso de la historia</h2>
+        <p>
+          En 1637, Pierre de Fermat escribió en el margen de su ejemplar de la <em>Aritmética</em>
+          de Diofanto que era imposible separar un cubo en dos cubos, ni una cuarta potencia en dos
+          cuartas potencias, ni en general ninguna potencia superior en dos potencias del mismo
+          grado, y añadió: <em>«He descubierto una demostración verdaderamente maravillosa, pero
+          este margen es demasiado estrecho para contenerla»</em>. La afirmación — la ecuación
+          aⁿ + bⁿ = cⁿ no tiene soluciones en enteros positivos para n &gt; 2 — resistió 358 años.
+        </p>
+
+        <h2>Cómo se resolvió</h2>
+        <ul>
+          <li>Euler demostró el caso n = 3 (1770); el propio Fermat, el n = 4.</li>
+          <li>Sophie Germain avanzó en los primeros casos generales a principios del s. XIX.</li>
+          <li>Kummer desarrolló sus «números ideales» (teoría de ideales) y probó el teorema para
+              muchísimos exponentes regulares (1847).</li>
+          <li>En 1995, <strong>Andrew Wiles</strong> (con Richard Taylor) cerró la demostración
+              vía la conjetura de Shimura–Taniyama–Weil para curvas elípticas semiestables:
+              ~130 páginas de curvas elípticas y formas modulares. Wiles recibió el Premio Abel
+              en 2016. Casi seguro, el margen de Fermat nunca contuvo demostración válida alguna.</li>
+        </ul>
+
+        <h2>Por qué «casi» no cuenta</h2>
+        <p>
+          La vista <em>La curva</em> lo enseña: para n = 2 la circunferencia a² + b² = c² pasa
+          exactamente por puntos de la rejilla entera (las ternas pitagóricas, infinitas, generadas
+          por Euclides). Para n &gt; 2 la curva de Lamé se cuela entre los puntos enteros: puedes
+          acercarte muchísimo — el mapa de <em>Casi-soluciones</em> encuentra parejas con error
+          relativo de una parte en un billón — pero jamás exactamente. En enteros, casi-solucionar
+          es no resolver nada: es lo que dice el teorema.
+        </p>
+
+        <h2>Explora</h2>
+        <div class="try-grid">
+          <button class="try-n" type="button" data-view="ternas" data-limit="5000">ternas hasta 5·10³<small>el abanico completo de rayos</small></button>
+          <button class="try-n" type="button" data-view="lame" data-n="2" data-c="25">n = 2, c = 25<small>la circunferencia sí toca la rejilla</small></button>
+          <button class="try-n" type="button" data-view="lame" data-n="3" data-c="100">n = 3, c = 100<small>la curva esquiva 99 columnas</small></button>
+          <button class="try-n" type="button" data-view="near" data-n="12" data-amax="1000">duodécimas hasta 1000<small>errores de una en 10¹²</small></button>
+          <button class="try-n" type="button" data-view="curiosities">curiosidades<small>Simpson y Ramanujan</small></button>
+        </div>
+
+        <h2>Enlaces</h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Fermat%27s_Last_Theorem" target="_blank" rel="noopener">Fermat's Last Theorem (Wikipedia)</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Fermat_near-miss" target="_blank" rel="noopener">Casi-soluciones de Fermat (Wikipedia)</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/1729_(number)" target="_blank" rel="noopener">1729, el número del taxista (Wikipedia)</a></li>
+          <li><a href="https://github.com/686f6c61/teorema-fermat-visualizacion" target="_blank" rel="noopener">Código fuente</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    ternas por Euclides · casi-soluciones verificadas con enteros exactos · FastAPI + canvas —
+    <a href="https://github.com/686f6c61/teorema-fermat-visualizacion" target="_blank" rel="noopener">github</a>
+  </footer>
+
+  <script type="module" src="/static/js/main.js"></script>
+</body>
+</html>

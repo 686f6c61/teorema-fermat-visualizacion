@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fermat"
+version = "2.0.0"
+description = "Explorador interactivo del Último Teorema de Fermat: ternas pitagóricas, curvas de Lamé y casi-soluciones verificadas con aritmética exacta."
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "686f6c61" }]
+requires-python = ">=3.10"
+keywords = ["fermat", "pythagorean", "number-theory", "visualization"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "numpy>=1.24",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "ruff>=0.5",
+    "httpx>=0.27",
+]
+
+[project.scripts]
+fermat = "fermat.server:main"
+
+[project.urls]
+Repository = "https://github.com/686f6c61/teorema-fermat-visualizacion"
+
+[tool.hatch.build.targets.wheel]
+packages = ["fermat"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+# RUF001/002/003: strings y docstrings usan símbolos matemáticos y tipografía
+# española (ⁿ, −, ×, «») a propósito
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
